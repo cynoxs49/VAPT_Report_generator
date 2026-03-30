@@ -1,14 +1,117 @@
+// datasource and generator setup
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
 generator client {
   provider = "prisma-client-js"
 }
 
-datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+// 4. Data Model - Users [cite: 30-37]
+model User {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
 }
 
-model User {
-  id        Int      @id @default(autoincrement())
-  name      String?
-  password  String
+// 4. Data Model - Companies [cite: 38-47]
+model Company {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  logoUrl     String?
+  email       String?
+  contactInfo String?
+  scope       String?
+  createdAt   DateTime  @default(now())
+  projects    Project[]
+}
+
+// 4. Data Model - Services [cite: 48-53]
+model Service {
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  createdAt DateTime   @default(now())
+  projects  Project[]
+  templates Template[]
+}
+
+// 6. Template System [cite: 54-74, 127-132]
+model Template {
+  id        String           @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  serviceId String           @db.ObjectId
+  service   Service          @relation(fields: [serviceId], references: [id])
+  version   String
+  isActive  Boolean          @default(true)
+  sections  TemplateSection[]
+  createdAt DateTime         @default(now())
+  versions  ProjectVersion[]
+}
+
+type TemplateSection {
+  sectionId String
+  title     String
+  blocks    Json[] // Stores rich_text, table, image, etc. [cite: 133-140]
+}
+
+// 4. Data Model - Projects [cite: 75-87]
+model Project {
+  id             String           @id @default(auto()) @map("_id") @db.ObjectId
+  companyId      String           @db.ObjectId
+  company        Company          @relation(fields: [companyId], references: [id])
+  serviceId      String           @db.ObjectId
+  service        Service          @relation(fields: [serviceId], references: [id])
+  createdBy      String           @db.ObjectId
+  currentVersion String?          // ID of the latest ProjectVersion
+  status         String           @default("draft") // draft or published [cite: 82]
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  versions       ProjectVersion[]
+}
+
+// 4. Data Model - Project Versions [cite: 88-117]
+model ProjectVersion {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  projectId     String    @db.ObjectId
+  project       Project   @relation(fields: [projectId], references: [id])
+  templateId    String    @db.ObjectId
+  template      Template  @relation(fields: [templateId], references: [id])
+  versionNumber Int       @default(1) // For conflict control [cite: 95, 191]
+  lastUpdatedBy String    @db.ObjectId
+  isLocked      Boolean   @default(false) // Locked upon publishing [cite: 195]
+  data          ReportData
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+type ReportData {
+  findings Finding[] // Central data entity [cite: 15, 150]
+}
+
+type Finding {
+  id             String
+  displayId      String   // X-01 format [cite: 101, 156]
+  order          Int
+  title          String
+  severity       String   // enum: Critical, High, Medium, Low [cite: 122]
+  cvssScore      Float
+  status         String   // enum: Open, Closed [cite: 123]
+  description    String
+  steps          String[]
+  impact         String[]
+  recommendation String?
+  images         String[] // URLs to S3 [cite: 125, 241]
+  references     String[]
+}
+
+// 12. Audit Logging [cite: 248-260]
+model AuditLog {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  action    String   // Finding created, updated, deleted, published [cite: 250-253]
+  entityId  String   @db.ObjectId
+  timestamp DateTime @default(now())
 }
