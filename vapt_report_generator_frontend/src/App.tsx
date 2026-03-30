@@ -1,10 +1,9 @@
 import React from "react";
 
-const App: React.FC = () => {
+const App = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-neutral-800 to-neutral-900 text-white flex items-center justify-center">
       <div className="text-center max-w-2xl px-6">
-        
         <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
           VAPT Report Generator
         </h1>
@@ -23,7 +22,6 @@ const App: React.FC = () => {
             Learn More
           </button>
         </div>
-
       </div>
     </div>
   );
