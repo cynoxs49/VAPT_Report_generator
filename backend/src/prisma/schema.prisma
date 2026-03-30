@@ -8,7 +8,7 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// 4. Data Model - Users [cite: 30-37]
+// 4. Data Model - Users
 model User {
   id           String   @id @default(auto()) @map("_id") @db.ObjectId
   name         String
@@ -17,7 +17,7 @@ model User {
   createdAt    DateTime @default(now())
 }
 
-// 4. Data Model - Companies [cite: 38-47]
+// 4. Data Model - Companies
 model Company {
   id          String    @id @default(auto()) @map("_id") @db.ObjectId
   name        String
@@ -29,7 +29,7 @@ model Company {
   projects    Project[]
 }
 
-// 4. Data Model - Services [cite: 48-53]
+// 4. Data Model - Services
 model Service {
   id        String     @id @default(auto()) @map("_id") @db.ObjectId
   name      String
@@ -38,7 +38,7 @@ model Service {
   templates Template[]
 }
 
-// 6. Template System [cite: 54-74, 127-132]
+// 6. Template System
 model Template {
   id        String           @id @default(auto()) @map("_id") @db.ObjectId
   name      String
@@ -57,7 +57,7 @@ type TemplateSection {
   blocks    Json[] // Stores rich_text, table, image, etc. [cite: 133-140]
 }
 
-// 4. Data Model - Projects [cite: 75-87]
+// 4. Data Model - Projects
 model Project {
   id             String           @id @default(auto()) @map("_id") @db.ObjectId
   companyId      String           @db.ObjectId
@@ -72,7 +72,7 @@ model Project {
   versions       ProjectVersion[]
 }
 
-// 4. Data Model - Project Versions [cite: 88-117]
+// 4. Data Model - Project Versions
 model ProjectVersion {
   id            String    @id @default(auto()) @map("_id") @db.ObjectId
   projectId     String    @db.ObjectId
@@ -107,7 +107,7 @@ type Finding {
   references     String[]
 }
 
-// 12. Audit Logging [cite: 248-260]
+// 12. Audit Logging
 model AuditLog {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   userId    String   @db.ObjectId

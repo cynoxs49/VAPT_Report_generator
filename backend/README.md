@@ -2,7 +2,7 @@
 
 ### Authentication
 
-`POST /auth/login`: Authenticate user and issue JWT (HTTP-only cookies).
+- `POST /auth/login`: Authenticate user and issue JWT (HTTP-only cookies).
 
 ### Projects & Versions
 
@@ -13,8 +13,7 @@
 
 ### Findings Management
 
-`POST /projects/:id/findings`: Add a new finding with auto-assigned `displayId` and `order`.
-
+- `POST /projects/:id/findings`: Add a new finding with auto-assigned `displayId` and `order`.
 - `PATCH /projects/:id/findings/:findingId`: Update a specific finding. **Must** include `versionNumber` for conflict detection.
 - `DELETE /projects/:id/findings/:findingId`: Remove a finding without renumbering existing `displayIds`.
 - `PATCH /projects/:id/findings/reorder`: Update the `order` field for a list of findings.
