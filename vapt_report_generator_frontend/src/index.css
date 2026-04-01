@@ -1,2 +1,43 @@
 @import "tailwindcss";
 
+/* ── Theme tokens (color only) ── */
+:root {
+  --c-bg: #0a0d0f;
+  --c-bg-2: #0f1317;
+  --c-bg-3: #141a1f;
+  --c-surface: #1a2129;
+  --c-border: rgba(0, 230, 180, 0.12);
+  --c-border-soft: rgba(255, 255, 255, 0.06);
+
+  --c-accent: #00e6b4;
+  --c-accent-dim: rgba(0, 230, 180, 0.08);
+  --c-accent-mid: rgba(0, 230, 180, 0.18);
+
+  --c-text-primary: #e8f0f0;
+  --c-text-secondary: #6b8a8a;
+  --c-text-muted: #3d5454;
+
+  --c-critical: #ff4d4d;
+  --c-yellow: #f5c542;
+  --c-green-dot: #3ddc84;
+
+  /* Typography */
+  --font-display: "Courier New", "Courier", monospace;
+  --font-body: "Segoe UI", system-ui, sans-serif;
+
+  /* Radius */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+}
+
+/* ── Keyframes ── */
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
