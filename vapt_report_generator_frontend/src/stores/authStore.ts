@@ -1,9 +1,20 @@
 import { create } from "zustand";
+import type { User } from "@/types";
 
 interface AuthState {
-  // auth state
+  user: User | null;
+  isAuthenticated: boolean;
+
+  // Actions
+  setUser: (user: User) => void;
+  logout: () => void;
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
-  // auth store logic
+export const useAuthStore = create<AuthState>()((set) => ({
+  user: null,
+  isAuthenticated: false,
+
+  setUser: (user) => set({ user, isAuthenticated: true }),
+
+  logout: () => set({ user: null, isAuthenticated: false }),
 }));
