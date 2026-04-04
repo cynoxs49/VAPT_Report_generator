@@ -1,0 +1,42 @@
+### Configuration
+@baseUrl = http://localhost:3000/api
+@companyId = REPLACE_WITH_ID_FROM_GET_ALL
+
+### 1. Create or Verify a Company
+# Uses 'upsert' logic: creates if name is new, updates if name exists
+POST {{baseUrl}}/companies
+Content-Type: application/json
+
+{
+  "name": "SecureCorp India",
+  "email": "contact@securecorp.in",
+  "scope": "External Web Application Pentest",
+  "contactInfo": "VAPT Team - Ext 402",
+  "logoUrl": "https://s3.amazonaws.com/vapt-assets/logos/securecorp.png"
+}
+
+
+### 2. List All Registered Companies
+# Includes a count of projects associated with each company
+GET {{baseUrl}}/companies
+
+
+### 3. Get Specific Company Details
+# Useful for the Client Profile page in your dashboard
+GET {{baseUrl}}/companies/{{companyId}}
+
+
+### 4. Update Company Profile
+# Tests the PATCH logic for changing contact details or scope
+PATCH {{baseUrl}}/companies/{{companyId}}
+Content-Type: application/json
+
+{
+  "contactInfo": "Global Security Operations Center",
+  "scope": "Full Infrastructure & Web Audit"
+}
+
+
+### 5. Delete a Company
+# Note: Will fail with 400 if active projects are linked
+DELETE {{baseUrl}}/companies/{{companyId}}

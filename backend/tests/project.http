@@ -1,0 +1,60 @@
+### Configuration
+@baseUrl = http://localhost:3000/api
+@projectId = YOUR_PROJECT_ID_AFTER_CREATE
+@findingId = YOUR_FINDING_ID_AFTER_ADD
+
+### 1. Create a New Project
+# This initializes ProjectVersion v1 and copies the Active Template
+POST {{baseUrl}}/projects
+Content-Type: application/json
+
+{
+  "name": "External Pentest - April 2026",
+  "companyId": "REPLACE_WITH_COMPANY_ID_FROM_SEED",
+  "serviceId": "REPLACE_WITH_SERVICE_ID_FROM_SEED",
+  "createdBy": "REPLACE_WITH_USER_ID_FROM_SEED"
+}
+
+### 2. Get Project Details
+# Retrieves project metadata and its current version data
+GET {{baseUrl}}/projects/{{projectId}}
+
+
+### 3. Add a New Finding
+# Auto-assigns displayId (e.g., WEB-01) and order
+POST {{baseUrl}}/projects/{{projectId}}/findings
+Content-Type: application/json
+
+{
+  "title": "SQL Injection in Login Form",
+  "severity": "CRITICAL",
+  "description": "An attacker can bypass authentication by injecting SQL commands.",
+  "remediation": "Use parameterized queries or prepared statements.",
+  "evidence": ["https://s3.amazonaws.com/vapt/evidence1.png"]
+}
+
+
+### 4. Add another Finding (to test reordering)
+POST {{baseUrl}}/projects/{{projectId}}/findings
+Content-Type: application/json
+
+{
+  "title": "Cross-Site Scripting (XSS)",
+  "severity": "HIGH",
+  "description": "Script injection possible via the search bar.",
+  "remediation": "Implement proper output encoding.",
+  "evidence": []
+}
+
+
+### 5. Reorder Findings
+# Updates the 'order' field for a list of findings
+PATCH {{baseUrl}}/projects/{{projectId}}/findings/reorder
+Content-Type: application/json
+
+{
+  "orderedIds": [
+    "SECOND_FINDING_ID",
+    "FIRST_FINDING_ID"
+  ]
+}

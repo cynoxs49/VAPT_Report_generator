@@ -1,0 +1,46 @@
+### Configuration
+@baseUrl = http://localhost:3000/api
+@serviceId = REPLACE_WITH_ID_FROM_GET_ALL
+
+### 1. Create a New Service
+# Note: Since we added @unique to the schema, running this twice 
+# with the same name will trigger the 'upsert' logic
+POST {{baseUrl}}/services
+Content-Type: application/json
+
+{
+  "name": "Network Pentest",
+  "description": "Comprehensive security assessment of internal and external network infrastructure."
+}
+
+
+### 2. List All Available Services
+# Use this to find the ID for the next requests
+GET {{baseUrl}}/services
+
+
+### 3. Update Service Name
+# Tests the PATCH logic and ensures unique constraints remain intact
+PATCH {{baseUrl}}/services/{{serviceId}}
+Content-Type: application/json
+
+{
+  "name": "Advanced Network Audit"
+}
+
+
+### 4. Get Templates for a Service
+# This retrieves all versioned templates (e.g., v1.0.0, v1.1.0) 
+# associated with this specific service ID
+GET {{baseUrl}}/services/{{serviceId}}/templates
+
+
+### 5. Test Unique Constraint Conflict
+# Try to create a service with a name that already exists 
+# (e.g., 'Web VAPT' from your seed data)
+POST {{baseUrl}}/services
+Content-Type: application/json
+
+{
+  "name": "Web VAPT"
+}

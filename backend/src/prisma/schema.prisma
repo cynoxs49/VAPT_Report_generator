@@ -8,7 +8,7 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// 4. Data Model - Users
+// Data Model - Users
 model User {
   id           String   @id @default(auto()) @map("_id") @db.ObjectId
   name         String
@@ -17,10 +17,10 @@ model User {
   createdAt    DateTime @default(now())
 }
 
-// 4. Data Model - Companies
+// Data Model - Companies
 model Company {
   id          String    @id @default(auto()) @map("_id") @db.ObjectId
-  name        String
+  name        String    @unique // Added @unique
   logoUrl     String?
   email       String?
   contactInfo String?
@@ -29,16 +29,16 @@ model Company {
   projects    Project[]
 }
 
-// 4. Data Model - Services
+// Data Model - Services
 model Service {
   id        String     @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
+  name      String     @unique // Added @unique
   createdAt DateTime   @default(now())
   projects  Project[]
   templates Template[]
 }
 
-// 6. Template System
+// Template System
 model Template {
   id        String           @id @default(auto()) @map("_id") @db.ObjectId
   name      String
