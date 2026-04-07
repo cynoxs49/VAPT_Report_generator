@@ -1,6 +1,13 @@
-// src/constants/enums.ts
-
-import type { Severity, FindingStatus } from "@/types";
+export type Severity = "Critical" | "High" | "Medium" | "Low";
+export type FindingStatus = "Open" | "Closed";
+export type ProjectStatus = "draft" | "published";
+export type BlockType =
+  | "rich_text"
+  | "table"
+  | "derived_table"
+  | "repeatable_detail"
+  | "image"
+  | "vulnerability_list";
 
 export const SEVERITY_OPTIONS: Severity[] = [
   "Critical",
@@ -31,3 +38,6 @@ export const CVSS_LABEL = (score: number): Severity => {
   if (score >= 4.0) return "Medium";
   return "Low";
 };
+
+export type TestType = "Black Box" | "Grey Box" | "White Box";
+export type AuditType = "Initial Audit Report" | "Re-test Report";

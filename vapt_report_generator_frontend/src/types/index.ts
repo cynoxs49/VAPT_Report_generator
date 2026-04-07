@@ -1,15 +1,13 @@
 // ─── Primitives / Enums ───────────────────────────────────────────────────────
 
-export type Severity = "Critical" | "High" | "Medium" | "Low";
-export type FindingStatus = "Open" | "Closed";
-export type ProjectStatus = "draft" | "published";
-export type BlockType =
-  | "rich_text"
-  | "table"
-  | "derived_table"
-  | "repeatable_detail"
-  | "image"
-  | "vulnerability_list";
+import type {
+  BlockType,
+  Severity,
+  FindingStatus,
+  TestType,
+  AuditType,
+  ProjectStatus,
+} from "@/constants/enums";
 
 // ─── User ─────────────────────────────────────────────────────────────────────
 
@@ -70,18 +68,33 @@ export interface Template {
 
 export interface Finding {
   _id: string;
-  displayId: string; // e.g. "WEB-01", auto-assigned by backend
-  order: number; // for drag-to-reorder
+  displayId: string;
+  order: number;
   title: string;
   severity: Severity;
-  cvssScore: number; // 0.0 - 10.0
+  cvssScore: number;
   status: FindingStatus;
-  description: string; // rich text (HTML string from Tiptap)
-  steps: string[]; // steps to reproduce, ordered list
-  impact: string[]; // impact statements
-  recommendation: string[]; // how to fix
-  images: string[]; // S3 URLs
-  references: string[]; // CVE links, articles
+
+  // NEW FIELDS
+  affectedScope: string; // the URL/endpoint affected
+  owaspMapping: string; // e.g. "A01: Broken Access Control"
+  cweMapping: string; // e.g. "CWE-284 (Improper Access Control)"
+  epssLikelihood: string; // e.g. "Very High (>80%)"
+  riskPriority: string; // e.g. "Immediate"
+  epssRemarks: string; // e.g. "Highly exploitable..."
+
+  description: string; // rich text HTML string
+
+  // steps support optional screenshots
+  steps: Array<{
+    text: string;
+    imageUrl?: string;
+  }>;
+
+  impact: string[];
+  recommendation: string[];
+  references: string[];
+  images: string[]; // general images (non-step screenshots)
 }
 
 // ─── ProjectVersion ───────────────────────────────────────────────────────────
@@ -96,6 +109,26 @@ export interface ProjectVersion {
   isLocked: boolean;
   data: {
     findings: Finding[];
+
+    // Engagement-level fields (Zone 2 data)
+    engagementTimeframe: string; // "14.03.2026 – 19.03.2026"
+    organizationContact: string; // "Mr. Gokul Vijayakumar"
+    constraints: string; // "No constraints were experienced..."
+    testType: TestType;
+    auditType: AuditType;
+    documentId: string; // "214"
+    preparedBy: string;
+    reviewedBy: string;
+    approvedBy: string;
+    releasedBy: string;
+    releaseDate: string;
+
+    auditTeam: AuditTeamMember[];
+    toolsUsed: ToolUsed[];
+
+    executiveSummary: string; // the paragraph on page 9
+    strategicRecommendations: string[]; // bullet points on page 9
+    overallRiskRating: Severity; // "Critical" — shown highlighted in risk matrix
   };
   createdAt: string;
   updatedAt: string;
@@ -118,6 +151,21 @@ export interface Project {
 }
 
 // ─── AuditLog ─────────────────────────────────────────────────────────────────
+
+// NEW
+export interface AuditTeamMember {
+  name: string;
+  designation: string;
+  email: string;
+  certifications: string;
+  listedInSnapshot: boolean;
+}
+
+export interface ToolUsed {
+  name: string;
+  version: string;
+  licenseType: "Open Source" | "Licensed";
+}
 
 export type AuditAction =
   | "finding_created"
