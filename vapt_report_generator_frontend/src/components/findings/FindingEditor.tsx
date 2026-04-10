@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useMutation } from "@tanstack/react-query";
+// import { useMutation } from "@tanstack/react-query";
 import { useFindingsStore } from "@/stores/findingsStore";
 import { useProjectStore } from "@/stores/projectStore";
 import { useUiStore } from "@/stores/uiStore";
@@ -25,13 +25,13 @@ import type { FindingFormData } from "@/types";
 const schema = z.object({
   title: z.string().min(1, "Title is required"),
   severity: z.enum(["Critical", "High", "Medium", "Low"]),
-  cvssScore: z.coerce.number().min(0).max(10),
+  cvssScore: z.number().min(0).max(10),
   status: z.enum(["Open", "Closed"]),
   affectedScope: z.string(),
   owaspMapping: z.string(),
   cweMapping: z.string(),
   epssLikelihood: z.string(),
-  riskPriority: z.string(),
+  riskPriority: z.enum(["Immediate", "High", "Medium", "Low"]),
   epssRemarks: z.string(),
   description: z.string(),
   steps: z.array(
@@ -40,7 +40,13 @@ const schema = z.object({
   impact: z.array(z.string()),
   recommendation: z.array(z.string()),
   references: z.array(z.string()),
-  images: z.array(z.string()),
+  images: z.array(
+    z.object({
+      url: z.string(),
+      caption: z.string().optional(),
+      stepIndex: z.number().optional(),
+    }),
+  ),
 });
 
 // ── Section divider ───────────────────────────────────────────────────────────
@@ -95,11 +101,17 @@ export function FindingEditor({
   disabled = false,
 }: FindingEditorProps) {
   const { findings, updateFinding: updateStore } = useFindingsStore();
-  const { currentProject, versionNumber } = useProjectStore();
+  const {
+    currentProject,
+    versionNumber,
+    incrementVersionNumber,
+    setVersionNumber,
+    updateVersionData,
+  } = useProjectStore();
   const { setSavingStatus } = useUiStore();
+  const projectId = currentProject?._id ?? "";
 
   const finding = findings.find((f) => f._id === findingId);
-  const projectId = currentProject?._id ?? "";
 
   const {
     register,
@@ -160,21 +172,35 @@ export function FindingEditor({
 
   // Auto-save wired to watch
   const formValues = watch();
+  const serializedFormValues = JSON.stringify(formValues);
+
+  useEffect(() => {
+    if (!finding || disabled) return;
+
+    updateStore(findingId, formValues);
+    const nextFindings = useFindingsStore
+      .getState()
+      .findings.map((f) => (f._id === findingId ? { ...f, ...formValues } : f));
+    updateVersionData({ findings: nextFindings });
+  }, [serializedFormValues, findingId, disabled]);
 
   useAutoSave({
     data: formValues,
     onSave: async (data) => {
       setSavingStatus("saving");
-      updateStore(findingId, data);
       try {
-        const res = await updateFinding(
-          projectId,
-          findingId,
-          versionNumber,
-          data,
-        );
+        // 2. Fire the API PATCH
+        const res = await updateFinding(projectId, findingId, versionNumber, data);
         if (res.success) {
+          // 3. Backend returned new versionNumber — store it
+          if (res.data?.versionNumber) {
+            setVersionNumber(res.data.versionNumber);
+          } else {
+            incrementVersionNumber();
+          }
           setSavingStatus("saved");
+          // Reset to idle after 2s so the indicator doesn't stay forever
+          setTimeout(() => setSavingStatus("idle"), 2000);
         } else {
           setSavingStatus("error");
         }
@@ -267,7 +293,7 @@ export function FindingEditor({
             label="CVSS Score"
             hint={watchedCvss ? CVSS_LABEL(Number(watchedCvss)) : undefined}>
             <input
-              {...register("cvssScore")}
+              {...register("cvssScore", { valueAsNumber: true })}
               type="number"
               step="0.1"
               min="0"

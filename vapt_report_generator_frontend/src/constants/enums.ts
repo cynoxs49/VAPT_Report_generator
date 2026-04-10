@@ -41,3 +41,38 @@ export const CVSS_LABEL = (score: number): Severity => {
 
 export type TestType = "Black Box" | "Grey Box" | "White Box";
 export type AuditType = "Initial Audit Report" | "Re-test Report";
+
+export const TEST_TYPE_OPTIONS: TestType[] = [
+  "Black Box",
+  "Grey Box",
+  "White Box",
+];
+
+export const AUDIT_TYPE_OPTIONS: AuditType[] = [
+  "Initial Audit Report",
+  "Re-test Report",
+];
+
+export type Confidentiality =
+  | "Confidential"
+  | "Internal Use"
+  | "Restricted"
+  | "Public";
+
+export const CONFIDENTIALITY_OPTIONS: Confidentiality[] = [
+  "Confidential",
+  "Internal Use",
+  "Restricted",
+  "Public",
+];
+
+export type RiskPriority = "Immediate" | "High" | "Medium" | "Low";
+
+export type ReportPhase =
+  | "Information Gathering"
+  | "Application Mapping"
+  | "Threat Modeling"
+  | "Vulnerability Discovery"
+  | "Exploitation"
+  | "Validation"
+  | "Reporting";

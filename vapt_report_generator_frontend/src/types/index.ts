@@ -7,6 +7,8 @@ import type {
   TestType,
   AuditType,
   ProjectStatus,
+  RiskPriority,
+  Confidentiality,
 } from "@/constants/enums";
 
 // ─── User ─────────────────────────────────────────────────────────────────────
@@ -80,7 +82,7 @@ export interface Finding {
   owaspMapping: string; // e.g. "A01: Broken Access Control"
   cweMapping: string; // e.g. "CWE-284 (Improper Access Control)"
   epssLikelihood: string; // e.g. "Very High (>80%)"
-  riskPriority: string; // e.g. "Immediate"
+  riskPriority: RiskPriority; // e.g. "Immediate"
   epssRemarks: string; // e.g. "Highly exploitable..."
 
   description: string; // rich text HTML string
@@ -94,7 +96,7 @@ export interface Finding {
   impact: string[];
   recommendation: string[];
   references: string[];
-  images: string[]; // general images (non-step screenshots)
+  images: FindingImage[]; // general images (non-step screenshots)
 }
 
 // ─── ProjectVersion ───────────────────────────────────────────────────────────
@@ -129,6 +131,15 @@ export interface ProjectVersion {
     executiveSummary: string; // the paragraph on page 9
     strategicRecommendations: string[]; // bullet points on page 9
     overallRiskRating: Severity; // "Critical" — shown highlighted in risk matrix
+    confidentiality: Confidentiality;
+    changeHistory: ChangeHistoryEntry[];
+    distributionList: DistributionEntry[];
+    methodology: {
+      description: string;
+      standards: string[];
+      phases: string[];
+    };
+    retestRecords?: RetestRecord[]; // only present on AuditType = "Re-test Report"
   };
   createdAt: string;
   updatedAt: string;
@@ -205,3 +216,32 @@ export type CreateProjectFormData = {
   companyId: string;
   serviceId: string;
 };
+
+export interface ChangeHistoryEntry {
+  version: string; // "v1", "v2", "v3"
+  date: string; // ISO date string
+  author: string; // person who made the change
+  designation?: string;
+  remarks: string; // what changed
+}
+
+export interface DistributionEntry {
+  name: string;
+  organization: string;
+  designation: string;
+  email: string;
+}
+
+export interface FindingImage {
+  url: string;
+  caption?: string;
+  stepIndex?: number; // undefined = general image, number = tied to step
+}
+
+export interface RetestRecord {
+  findingId: string;
+  retestDate: string;
+  retestBy: string;
+  result: "Resolved" | "Partially Resolved" | "Unresolved";
+  notes?: string;
+}

@@ -16,6 +16,8 @@ interface ProjectState {
 
   // Called after a successful PATCH — backend returns new versionNumber
   incrementVersionNumber: () => void;
+  setVersionNumber: (versionNumber: number) => void;
+  updateVersionData: (changes: Partial<ProjectVersion["data"]>) => void;
 
   // Called after publish — locks the UI
   lockCurrentVersion: () => void;
@@ -40,7 +42,37 @@ export const useProjectStore = create<ProjectState>()((set) => ({
     }),
 
   incrementVersionNumber: () =>
-    set((state) => ({ versionNumber: state.versionNumber + 1 })),
+    set((state) => ({
+      versionNumber: state.versionNumber + 1,
+      currentVersion: state.currentVersion
+        ? {
+            ...state.currentVersion,
+            versionNumber: state.currentVersion.versionNumber + 1,
+          }
+        : state.currentVersion,
+    })),
+
+  setVersionNumber: (versionNumber) =>
+    set((state) => ({
+      versionNumber,
+      currentVersion: state.currentVersion
+        ? { ...state.currentVersion, versionNumber }
+        : state.currentVersion,
+    })),
+
+  updateVersionData: (changes) =>
+    set((state) => {
+      if (!state.currentVersion) return state;
+      return {
+        currentVersion: {
+          ...state.currentVersion,
+          data: {
+            ...state.currentVersion.data,
+            ...changes,
+          },
+        },
+      };
+    }),
 
   lockCurrentVersion: () =>
     set((state) => {

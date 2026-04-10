@@ -8,9 +8,7 @@ import Footer from "./components/Footer";
 const App = () => {
   return (
     <Router>
-      {/* <div className="flex flex-col h-screen overflow-hidden"> */}
       <Navbar />
-      {/* <main className="flex-1 overflow-hidden"> */}
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/dashboard" element={<Dashboard />} />
@@ -18,9 +16,7 @@ const App = () => {
         <Route path="/projects/:id" element={<ProjectPage />} />
         <Route path="/projects/:id/preview" element={<ProjectPage />} />
       </Routes>
-      {/* </main> */}
       <Footer />
-      {/* </div> */}
     </Router>
   );
 };

@@ -5,8 +5,11 @@ import { getProject, getProjectVersion } from "@/api/project";
 import { useProjectStore } from "@/stores/projectStore";
 import { useFindingsStore } from "@/stores/findingsStore";
 import { useUiStore } from "@/stores/uiStore";
-import FindingsPanel from "@/components/findings/FindingsPanel";
+import FindingsPanel from "@/components/panels/FindingsPanel";
 import PreviewPanel from "@/components/preview/PreviewPanel";
+import EngagementsPanel from "@/components/panels/EngagementsPanel";
+import AuditDataPanel from "@/components/panels/AuditDataPanel";
+import MethodologyPanel from "@/components/panels/MethodologyPanel";
 
 const SavingIndicator = () => {
   const savingStatus = useUiStore((s) => s.savingStatus);
@@ -61,6 +64,9 @@ export default function ProjectPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [activePanel, setActivePanel] = useState("Findings");
+
+  const panels = ["Engagements", "Findings", "Audit Data", "Methodology"];
 
   const {
     setProject,
@@ -223,9 +229,27 @@ export default function ProjectPage() {
       <div className="flex-1 flex overflow-hidden">
         <div
           className={`flex flex-col overflow-hidden transition-all duration-300 ease-in-out border-r border-[var(--c-border-soft)] ${
-            previewOpen ? "w-[420px] flex-shrink-0" : "flex-1"
+            previewOpen ? "w-1/3 flex-shrink-0" : "w-full"
           }`}>
-          <FindingsPanel isLocked={isLocked} />
+          <section className="w-full p-2 flex gap-2 border border-[var(--c-border-soft)]">
+            {panels.map((panel, idx) => (
+              <button
+                key={idx}
+                onClick={() => setActivePanel(panel)}
+                className={`px-3.5 py-[7px] text-xs font-semibold rounded-[var(--radius-sm)] border transition-all duration-200 ${
+                  activePanel === panel
+                    ? "bg-[var(--c-accent-dim)] border-[var(--c-border)] text-[var(--c-accent)]"
+                    : "bg-transparent border-[var(--c-border-soft)] text-[var(--c-text-secondary)] hover:border-[var(--c-border)] hover:text-[var(--c-text-primary)]"
+                }`}>
+                {panel}
+              </button>
+            ))}
+          </section>
+
+          {activePanel === "Findings" && <FindingsPanel isLocked={isLocked} />}
+          {activePanel === "Engagements" && <EngagementsPanel />}
+          {activePanel === "Audit Data" && <AuditDataPanel />}
+          {activePanel === "Methodology" && <MethodologyPanel />}
         </div>
 
         <div

@@ -1,4 +1,3 @@
-import apiClient from "@/lib/axios";
 import type { Finding } from "@/types";
 import type { FindingFormData } from "@/types";
 import { dummyFindings } from "@/lib/dummyData";
@@ -13,6 +12,7 @@ export const addFinding = async (
   // return res.data.data;
 
   // TEMPORARY: Return dummy finding
+  void projectId;
   const newFinding: Finding = {
     _id: `finding_${Date.now()}`,
     displayId: `WEB-${dummyFindings.length + 1}`,
@@ -45,7 +45,7 @@ export const updateFinding = async (
   findingId: string,
   versionNumber: number,
   changes: Partial<FindingFormData>,
-): Promise<{ versionNumber: number }> => {
+): Promise<{ success: boolean; data?: { versionNumber: number } }> => {
   // const res = await apiClient.patch(
   //   `/projects/${projectId}/findings/${findingId}`,
   //   {
@@ -57,7 +57,10 @@ export const updateFinding = async (
   // return res.data.data;
 
   // TEMPORARY: Return incremented versionNumber
-  return { versionNumber: versionNumber + 1 };
+  void projectId;
+  void findingId;
+  void changes;
+  return { success: true, data: { versionNumber: versionNumber + 1 } };
 };
 
 // DELETE /projects/:id/findings/:findingId
@@ -65,9 +68,12 @@ export const updateFinding = async (
 export const deleteFinding = async (
   projectId: string,
   findingId: string,
-): Promise<void> => {
+): Promise<{ success: true }> => {
   // await apiClient.delete(`/projects/${projectId}/findings/${findingId}`);
   // TEMPORARY: No-op, dummy data
+  void projectId;
+  void findingId;
+  return { success: true };
 };
 
 // PATCH /projects/:id/findings/reorder
@@ -78,4 +84,6 @@ export const reorderFindings = async (
 ): Promise<void> => {
   // await apiClient.patch(`/projects/${projectId}/findings/reorder`, { order });
   // TEMPORARY: No-op, dummy data
+  void projectId;
+  void order;
 };

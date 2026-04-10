@@ -5,7 +5,6 @@ import type {
   Project,
   ProjectVersion,
   Finding,
-  AuditTeamMember,
 } from "@/types";
 
 // ─── Companies ────────────────────────────────────────────────────────────────
@@ -305,6 +304,37 @@ export const dummyProjectVersion: ProjectVersion = {
       "Implement strict server-side validation...",
     ],
     overallRiskRating: "Critical",
+    confidentiality: "Confidential",
+    changeHistory: [
+      {
+        version: "v1",
+        date: "2025-03-01",
+        author: "Ujjwal",
+        designation: "Cyber Security Analyst",
+        remarks: "Initial report draft created",
+      },
+    ],
+    distributionList: [
+      {
+        name: "John Smith",
+        organization: "Acme Corp",
+        designation: "Security Contact",
+        email: "security@acmecorp.com",
+      },
+    ],
+    methodology: {
+      description:
+        "<p>The assessment followed a structured VAPT methodology covering discovery, application mapping, vulnerability identification, validation, and reporting.</p>",
+      standards: ["OWASP Top 10", "OWASP Testing Guide", "CWE"],
+      phases: [
+        "Information Gathering",
+        "Application Mapping",
+        "Vulnerability Discovery",
+        "Validation",
+        "Reporting",
+      ],
+    },
+    retestRecords: [],
   },
   createdAt: "2025-03-01T10:00:00.000Z",
   updatedAt: "2025-03-01T10:00:00.000Z",

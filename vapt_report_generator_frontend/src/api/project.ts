@@ -56,3 +56,79 @@ export const createNewVersion = async (
   const res = await apiClient.post(`/projects/${projectId}/version`);
   return res.data.data;
 };
+
+// PATCH /projects/:id/engagement
+// Updates engagement-level data (summary, recommendations, etc.)
+// versionNumber is required for conflict detection
+export const updateEngagement = async (
+  projectId: string,
+  versionNumber: number,
+  changes: Partial<ProjectVersion["data"]>,
+): Promise<{ success: boolean; data?: { versionNumber: number } }> => {
+  // const res = await apiClient.patch(
+  //   `/projects/${projectId}/engagement`,
+  //   {
+  //     versionNumber,
+  //     data: changes,
+  //   },
+  // );
+  // return res.data;
+
+  // TEMPORARY: Return incremented versionNumber
+  void projectId;
+  void changes;
+  return { success: true, data: { versionNumber: versionNumber + 1 } };
+};
+
+// PATCH /projects/:id/audit-data
+// Updates audit team, tools used, and distribution list
+export const updateAuditData = async (
+  projectId: string,
+  versionNumber: number,
+  changes: {
+    auditTeam?: ProjectVersion["data"]["auditTeam"];
+    toolsUsed?: ProjectVersion["data"]["toolsUsed"];
+    distributionList?: ProjectVersion["data"]["distributionList"];
+  },
+): Promise<{ success: boolean; data?: { versionNumber: number } }> => {
+  // const res = await apiClient.patch(
+  //   `/projects/${projectId}/audit-data`,
+  //   {
+  //     versionNumber,
+  //     data: changes,
+  //   },
+  // );
+  // return res.data;
+
+  // TEMPORARY: Return incremented versionNumber
+  void projectId;
+  void changes;
+  return { success: true, data: { versionNumber: versionNumber + 1 } };
+};
+
+// PATCH /projects/:id/methodology
+// Updates methodology, standards, phases, and retest records
+export const updateMethodology = async (
+  projectId: string,
+  versionNumber: number,
+  changes: {
+    description?: string;
+    standards?: string[];
+    phases?: string[];
+    retestRecords?: ProjectVersion["data"]["retestRecords"];
+  },
+): Promise<{ success: boolean; data?: { versionNumber: number } }> => {
+  // const res = await apiClient.patch(
+  //   `/projects/${projectId}/methodology`,
+  //   {
+  //     versionNumber,
+  //     data: changes,
+  //   },
+  // );
+  // return res.data;
+
+  // TEMPORARY: Return incremented versionNumber
+  void projectId;
+  void changes;
+  return { success: true, data: { versionNumber: versionNumber + 1 } };
+};

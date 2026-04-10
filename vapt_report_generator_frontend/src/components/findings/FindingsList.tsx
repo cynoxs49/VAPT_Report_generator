@@ -35,7 +35,7 @@ export function FindingsList({
     reorderFindings: reorderStore,
     deleteFinding: deleteFromStore,
   } = useFindingsStore();
-  const { currentProject, versionNumber } = useProjectStore();
+  const { currentProject, updateVersionData } = useProjectStore();
   const { setDeletingFindingId, deletingFindingId } = useUiStore();
 
   const projectId = currentProject?._id ?? "";
@@ -49,7 +49,9 @@ export function FindingsList({
     mutationFn: () => addFinding(projectId, {}),
     onSuccess: (res) => {
       if (res.success) {
-        setFindings([...findings, res.data]);
+        const nextFindings = [...findings, res.data];
+        setFindings(nextFindings);
+        updateVersionData({ findings: nextFindings });
         onSelectFinding(res.data._id);
       }
     },
@@ -60,7 +62,11 @@ export function FindingsList({
     mutationFn: (findingId: string) => deleteFinding(projectId, findingId),
     onSuccess: (res, findingId) => {
       if (res.success) {
+        const nextFindings = useFindingsStore
+          .getState()
+          .findings.filter((f) => f._id !== findingId);
         deleteFromStore(findingId);
+        updateVersionData({ findings: nextFindings });
         setDeletingFindingId(null);
       }
     },
@@ -81,6 +87,7 @@ export function FindingsList({
     const reordered = arrayMove(findings, oldIndex, newIndex);
 
     reorderStore(reordered);
+    updateVersionData({ findings: reordered });
     reorderMutation.mutate(
       reordered.map((f, i) => ({ id: f._id, order: i + 1 })),
     );

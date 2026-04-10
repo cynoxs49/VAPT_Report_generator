@@ -3,6 +3,8 @@ import { useProjectStore } from "@/stores/projectStore";
 export default function PreviewRenderer() {
   const currentVersion = useProjectStore((s) => s.currentVersion);
   const currentProject = useProjectStore((s) => s.currentProject);
+  void currentVersion;
+  void currentProject;
 
   return (
     <div className="report-root">
